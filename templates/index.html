@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="corporate-light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerIntel Pro | AI Job Platform</title>
+    <link rel="stylesheet" href="/static/css/main.css">
+    <link rel="stylesheet" href="/static/css/themes/corporate-light.css" id="theme-css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-brain"></i>
+                <span>CareerIntel<span class="pro-badge">PRO</span></span>
+            </div>
+            
+            <div class="nav-search">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="global-search" placeholder="Search jobs by title, skill, or company...">
+                    <button class="search-btn" onclick="performSearch()">Search</button>
+                </div>
+            </div>
+            
+            <div class="nav-menu">
+                <a href="/" class="nav-link active"><i class="fas fa-home"></i> Dashboard</a>
+                <a href="/job_search" class="nav-link"><i class="fas fa-search"></i> Job Search</a>
+                <a href="/cv_analyzer" class="nav-link"><i class="fas fa-file-alt"></i> CV Analyzer</a>
+                <a href="/career_insights" class="nav-link"><i class="fas fa-chart-line"></i> Insights</a>
+                <div class="user-dropdown">
+                    <img src="https://ui-avatars.com/api/?name=User&background=3b82f6&color=fff" alt="User">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Jobs Found</h3>
+                    <div class="stat-value" id="jobs-count">0</div>
+                    <div class="stat-change positive">
+                        <i class="fas fa-arrow-up"></i> <span id="jobs-change">0%</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-percentage"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Match Score</h3>
+                    <div class="stat-value" id="match-score">0%</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="match-progress"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-file-contract"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>CV Score</h3>
+                    <div class="stat-value" id="cv-score">0/100</div>
+                    <button class="btn-small" onclick="analyzeCV()">Analyze CV</button>
+                </div>
+            </div>
+            
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-globe"></i>
+                </div>
+                <div class="stat-content">
+                    <h3>Remote Jobs</h3>
+                    <div class="stat-value" id="remote-jobs">0</div>
+                    <div class="stat-tag">Global</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="content-grid">
+            <!-- Left Column: Job Results -->
+            <div class="content-main">
+                <div class="section-header">
+                    <h2><i class="fas fa-bolt"></i> Recommended Jobs</h2>
+                    <div class="filter-options">
+                        <select id="job-filter" onchange="filterJobs()">
+                            <option value="all">All Jobs</option>
+                            <option value="remote">Remote Only</option>
+                            <option value="high-match">High Match</option>
+                            <option value="recent">Recent</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="jobs-container" id="jobs-container">
+                    <!-- Jobs will be loaded here -->
+                    <div class="empty-state">
+                        <i class="fas fa-search fa-3x"></i>
+                        <h3>No jobs found</h3>
+                        <p>Search for jobs to see recommendations</p>
+                        <button class="btn-primary" onclick="showSearchModal()">
+                            <i class="fas fa-search"></i> Search Jobs
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Column: CV Analysis -->
+            <div class="content-sidebar">
+                <div class="cv-analysis-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-bar"></i> CV Health Score</h3>
+                        <button class="btn-icon" onclick="uploadCV()">
+                            <i class="fas fa-upload"></i>
+                        </button>
+                    </div>
+                    
+                    <div class="score-display">
+                        <div class="score-circle">
+                            <svg width="120" height="120">
+                                <circle cx="60" cy="60" r="50" stroke="#e0e0e0" stroke-width="8" fill="none"/>
+                                <circle id="score-arc" cx="60" cy="60" r="50" stroke="#3b82f6" stroke-width="8" 
+                                        fill="none" stroke-linecap="round" transform="rotate(-90 60 60)"
+                                        stroke-dasharray="314" stroke-dashoffset="219.8"/>
+                            </svg>
+                            <div class="score-text">
+                                <span id="cv-score-display">78</span>
+                                <small>/100</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="cv-recommendations">
+                        <h4>Recommendations</h4>
+                        <ul id="cv-recommendations">
+                            <li><i class="fas fa-check-circle"></i> Good skills section</li>
+                            <li><i class="fas fa-exclamation-circle"></i> Add more projects</li>
+                            <li><i class="fas fa-exclamation-circle"></i> Quantify achievements</li>
+                        </ul>
+                    </div>
+                    
+                    <button class="btn-secondary btn-full" onclick="improveCV()">
+                        <i class="fas fa-magic"></i> Improve CV with AI
+                    </button>
+                </div>
+                
+                <!-- Theme Switcher -->
+                <div class="theme-switcher">
+                    <h4><i class="fas fa-palette"></i> Theme</h4>
+                    <select id="theme-selector" onchange="changeTheme(this.value)">
+                        <option value="corporate-light">Corporate Light</option>
+                        <option value="corporate-dark">Corporate Dark</option>
+                        <option value="blue-tech">Blue Tech</option>
+                        <option value="minimal-white">Minimal White</option>
+                        <option value="modern-gradient">Modern Gradient</option>
+                        <option value="career-focus">Career Focus</option>
+                        <option value="night-pro">Night Pro</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="search-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Advanced Job Search</h3>
+                <button class="modal-close" onclick="closeModal('search-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Job Title / Keywords</label>
+                    <input type="text" id="search-query" placeholder="e.g., Software Engineer, Python Developer">
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="search-location" placeholder="City, Country, or Remote">
+                </div>
+                <div class="form-group">
+                    <label>Experience Level</label>
+                    <select id="search-experience">
+                        <option value="">Any</option>
+                        <option value="entry">Entry Level</option>
+                        <option value="mid">Mid Level</option>
+                        <option value="senior">Senior</option>
+                        <option value="lead">Lead/Manager</option>
+                    </select>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="search-remote">
+                    <label for="search-remote">Remote Only</label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('search-modal')">Cancel</button>
+                <button class="btn-primary" onclick="performAdvancedSearch()">
+                    <i class="fas fa-search"></i> Search Jobs
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CV Upload Modal -->
+    <div id="cv-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Upload & Analyze CV</h3>
+                <button class="modal-close" onclick="closeModal('cv-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-zone" id="drop-zone">
+                    <i class="fas fa-cloud-upload-alt fa-3x"></i>
+                    <p>Drag & drop your CV here</p>
+                    <p class="upload-hint">Supports PDF, DOCX, TXT (Max 5MB)</p>
+                    <input type="file" id="cv-file" accept=".pdf,.doc,.docx,.txt" hidden>
+                    <button class="btn-secondary" onclick="document.getElementById('cv-file').click()">
+                        Browse Files
+                    </button>
+                </div>
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+                <div class="form-group">
+                    <label>Paste CV Text</label>
+                    <textarea id="cv-text" rows="6" placeholder="Paste your CV content here..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeModal('cv-modal')">Cancel</button>
+                <button class="btn-primary" onclick="analyzeUploadedCV()">
+                    <i class="fas fa-chart-bar"></i> Analyze CV
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/js/app.js"></script>
+    <script>
+        // Initialize application
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved theme
+            const savedTheme = localStorage.getItem('careerintel_theme') || 'corporate-light';
+            changeTheme(savedTheme);
+            
+            // Load sample jobs
+            loadSampleJobs();
+        });
+        
+        function changeTheme(theme) {
+            const themeCSS = document.getElementById('theme-css');
+            themeCSS.href = `/static/css/themes/${theme}.css`;
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('careerintel_theme', theme);
+            
+            // Update selector
+            const selector = document.getElementById('theme-selector');
+            if (selector) selector.value = theme;
+        }
+        
+        function showSearchModal() {
+            document.getElementById('search-modal').style.display = 'block';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function uploadCV() {
+            document.getElementById('cv-modal').style.display = 'block';
+        }
+        
+        // Sample data loading
+        function loadSampleJobs() {
+            const jobsContainer = document.getElementById('jobs-container');
+            jobsContainer.innerHTML = `
+                <div class="job-card">
+                    <div class="job-header">
+                        <div class="company-logo">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="job-meta">
+                            <span class="match-badge">92% Match</span>
+                            <button class="bookmark-btn"><i class="far fa-bookmark"></i></button>
+                        </div>
+                    </div>
+                    <h3 class="job-title">Senior Frontend Developer</h3>
+                    <p class="company-name">Tech Innovations Inc.</p>
+                    <div class="job-details">
+                        <span><i class="fas fa-map-marker-alt"></i> San Francisco, CA</span>
+                        <span><i class="fas fa-home"></i> Hybrid</span>
+                        <span><i class="fas fa-money-bill-wave"></i> $140k - $180k</span>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">React</span>
+                        <span class="skill-tag">TypeScript</span>
+                        <span class="skill-tag">Next.js</span>
+                        <span class="skill-tag">UI/UX</span>
+                    </div>
+                    <div class="job-actions">
+                        <button class="btn-primary">Apply Now</button>
+                        <button class="btn-secondary">View Details</button>
+                    </div>
+                </div>
+                
+                <div class="job-card">
+                    <div class="job-header">
+                        <div class="company-logo">
+                            <i class="fas fa-cloud"></i>
+                        </div>
+                        <div class="job-meta">
+                            <span class="match-badge">85% Match</span>
+                            <button class="bookmark-btn"><i class="far fa-bookmark"></i></button>
+                        </div>
+                    </div>
+                    <h3 class="job-title">DevOps Engineer</h3>
+                    <p class="company-name">Cloud Systems LLC</p>
+                    <div class="job-details">
+                        <span><i class="fas fa-map-marker-alt"></i> Remote</span>
+                        <span><i class="fas fa-home"></i> Remote</span>
+                        <span><i class="fas fa-money-bill-wave"></i> $130k - $160k</span>
+                    </div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">AWS</span>
+                        <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">Kubernetes</span>
+                        <span class="skill-tag">CI/CD</span>
+                    </div>
+                    <div class="job-actions">
+                        <button class="btn-primary">Apply Now</button>
+                        <button class="btn-secondary">View Details</button>
+                    </div>
+                </div>
+            `;
+            
+            // Update stats
+            document.getElementById('jobs-count').textContent = '247';
+            document.getElementById('remote-jobs').textContent = '112';
+            document.getElementById('match-score').textContent = '85%';
+            document.getElementById('match-progress').style.width = '85%';
+        }
+    </script>
+</body>
+</html>
