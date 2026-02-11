@@ -1,0 +1,41 @@
+:root[data-theme="corporate-light"] {
+    --primary-color: #2563eb;
+    --secondary-color: #1e40af;
+    --background-color: #ffffff;
+    --surface-color: #f8fafc;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --success-color: #10b981;
+    --warning-color: #f59e0b;
+    --error-color: #ef4444;
+    --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --hover-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    --gradient-bg: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+    --accent-gradient: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+}
+
+body {
+    background: var(--background-color);
+    color: var(--text-primary);
+}
+
+.navbar {
+    background: var(--surface-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.stat-card {
+    background: var(--surface-color);
+    border: 1px solid var(--border-color);
+}
+
+.content-main, .cv-analysis-card, .theme-switcher {
+    background: white;
+    border: 1px solid var(--border-color);
+}
+
+.job-card {
+    background: white;
+    border: 1px solid var(--border-color);
+}
